@@ -16,7 +16,7 @@ welcome to your task manager
 
 </form>
 
-
+<a class="logout" href=" /Task-Dashboard/includes/logout.php">Logout</a>
 
 <?php
   include_once './layouts/footer.php';
