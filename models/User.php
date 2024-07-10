@@ -66,14 +66,23 @@ class User {
           // User exists, compare provided password with stored hash
           if (is_array($result) && password_verify($password, $result["password"])) {
             // username & password matches
-            return true;
+            return array(
+              "success" => true,
+              "userID" => $result["user_ID"]
+            );
           } else {
             // Password doesnt match
-            return false;
+            return array(
+              "success" => false,
+              "error" => "Invalid username or password."
+            );
           }
         } else {
           // Username doesnt match
-          return false;
+          return array(
+            "success" => false,
+            "error" => "Invalid username or password."
+          );
         }
       } else {
         return "Error executing login";

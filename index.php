@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset($_SESSION['username'])) {
+if (isset($_SESSION['userID'])) {
   // User has an active session, redirect to the tasks page
   header("Location: /Task-Dashboard/views/tasks.php") ;
   exit;

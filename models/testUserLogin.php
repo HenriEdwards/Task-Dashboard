@@ -3,4 +3,6 @@
 require_once "User.php";
 
 $user = new User();
-$user->login("testy", "test");
+echo " Executing... ";
+$user->login("test", "test");
+echo " Executing DONE ";

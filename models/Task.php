@@ -7,7 +7,12 @@ class Task {
   public function getTasks($userId, $pageNr) {
     $dbo = Database::getConnection();
 
-    // Count the number of tasks for the user and value must be returned so that the frontend knows how many pages to create
+    // check if page number have a value, if no assign 1
+    if (!$pageNr) {
+      $pageNr = 1;
+    }
+    echo $pageNr;
+    // 
 
 
 

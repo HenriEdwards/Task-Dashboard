@@ -14,14 +14,15 @@ class UserController {
   public function login($username, $password) {
     $result = $this->userModel->login($username, $password);
   
-    if ($result) {
+    // Accesss array 
+    if ($result['success']) {
       // Set the user's session data
       session_start();
-      $_SESSION['username'] = $username;
+      $_SESSION['userID'] = $result['userID'];
     }
   
     // Return response as JSON
-    $response = json_encode(['success' => $result]);
+    $response = json_encode(['success' => $result['success']]);
     echo $response;
     die();
   }
@@ -29,7 +30,7 @@ class UserController {
   public function register($username, $password) {
 
     $result = $this->userModel->register($username, $password);
-    
+
     // Return response as JSON
     $response = json_encode(['success' => $result]);
     echo $response;

@@ -23,10 +23,10 @@ function validateInput (username, password) {
   }
 
   // Check if password is at least 6 chars
-  if (password.length < 6){
-    $("#response").text("Password should be at least 6 characters.");
-    return false;
-  }
+  // if (password.length < 6){
+  //   $("#response").text("Password should be at least 6 characters.");
+  //   return false;
+  // }
 
   // Return validated input
   let dataObj = {username: username, password: password};
@@ -61,12 +61,20 @@ $(document).ready(function() {
         password: inputData.password,
       },
       success: function (response) {
-
+        console.log("OK LETS SEE1: ");
         // Parse the JSON response
         let responseData = JSON.parse(response);
 
+        console.log("OK LETS SEE1: ", responseData);
+        if (!responseData.success) {
+          console.log("FALSE !");
+        }
+        console.log("OK LETS SEE2: ", responseData.success);
+
         if (responseData.success) {
           // User login successful, redirect to tasks dashboard
+          console.log("OK LETS SEE3: ", responseData);
+
           window.location.href = "/Task-Dashboard/views/tasks.php";
         } else {
           // User not redirected, invalid input
