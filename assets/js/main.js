@@ -1,38 +1,80 @@
+
+function validateInput (username, password) {
+  username = username.trim();
+  password = password.trim();
+  
+  // Check if input is empty
+  if (username.length == 0 || password.length == 0) {
+    $("#response").text("Username or Password can't be empty.");
+    return false;
+  }
+
+  // Check if input contains spaces/tabs/
+  if (username.includes(' ') || username.includes('\t') || username.includes('\n') || password.includes(' ') || password.includes('\t') || password.includes('\n')) {
+    $("#response").text("Username or Password contains invalid character.");
+    return false;
+  }
+
+  // Check if the password contains only alphanumeric characters
+  const invalidRegex = /^[a-zA-Z0-9]+$/;
+  if (!invalidRegex.test(password) || !invalidRegex.test(username)) {
+    $("#response").text("Username or Password contains invalid character.");
+    return false;
+  }
+
+  // Check if password is at least 6 chars
+  if (password.length < 6){
+    $("#response").text("Password should be at least 6 characters.");
+    return false;
+  }
+
+  // Return validated input
+  let dataObj = {username: username, password: password};
+
+return dataObj;
+}
+
 $(document).ready(function() {
-  console.log('jquery loaded.');
 
   $('#login-form').submit(function(e) {
     e.preventDefault();
 
-    console.log('login clicked.');
-
-    // Retrieve data
-
+    // Retrieve input
     let username = $("#username").val();
     let password = $("#password").val();
 
-    console.log(username, password);
-    // Validate input
-    
+    // Call validateInput to check input validity
+    let inputData = validateInput(username, password);
+
+    // Stop script on invalid input
+    if (!inputData) {
+      return;
+    }
+
     // Send ajax request to controller
     $.ajax({
       type: "POST",
       url: "/Task-Dashboard/controllers/UserController.php", 
       data: {
         type: "login",
-        username: username,
-        password: password
+        username: inputData.username,
+        password: inputData.password,
       },
-      // dataType: 'json',
       success: function (response) {
-        console.log('AJAX success callback');
-        console.log('Response:', response);
-        // Redirect user to tasks dashboard
-        window.location.href = "/Task-Dashboard/views/tasks.php";
+
+        // Parse the JSON response
+        let responseData = JSON.parse(response);
+
+        if (responseData.success) {
+          // User login successful, redirect to tasks dashboard
+          window.location.href = "/Task-Dashboard/views/tasks.php";
+        } else {
+          // User not redirected, invalid input
+          $("#response").text("Invalid Username or Password.");
+        }
       },
-      error: function (response){
-        console.log('AJAX error callback');
-        console.log('Response:', response);
+      error: function (){
+          $("#response").text("Internal Error Occurred.");
       }
     })
   })
@@ -40,15 +82,17 @@ $(document).ready(function() {
   $('#register-form').submit(function(e) {
     e.preventDefault();
 
-    console.log('register clicked.');
-
-    // Retrieve data
-
+    // Retrieve input
     let username = $("#username").val();
     let password = $("#password").val();
 
-    console.log(username, password);
-    // Validate input
+    // Call validateInput to check input validity
+    let inputData = validateInput(username, password);
+
+    // Stop script on invalid input
+    if (!inputData) {
+      return;
+    }
 
     // Send registration request to controller
     $.ajax({
@@ -59,14 +103,21 @@ $(document).ready(function() {
         username: username,
         password: password
       },
-      dataType: 'json',
       success: function (response) {
-        console.log('AJAX success callback');
-        console.log('Response:', response);
+
+        // Parse the JSON response
+        let responseData = JSON.parse(response);
+
+        if (responseData.success) {
+          // User registration successful, redirect to login
+          window.location.href = "/Task-Dashboard/views/login.php";
+        } else {
+          // User not redirected, invalid input
+          $("#response").text("Username already taken.");
+        }
       },
-      error: function (response){
-        console.log('AJAX error callback');
-        console.log('Response:', response);
+      error: function (){
+        $("#response").text("Internal Error Occurred.");
       }
     })
   })

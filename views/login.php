@@ -2,20 +2,24 @@
   include_once './layouts/header.php';
 ?>
 <h1>Please sign in</h1>
+<div>
+  <form id="login-form">
+      <input type="hidden" name="type" value="login">
+      <label for="name">Username:</label>
+      <input type="text" id="username" name="username">
 
-<form id="login-form">
-    <input type="hidden" name="type" value="login">
-    <label for="name">Username:</label>
-    <input type="text" id="username" name="username" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password">
 
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
+      <button type="submit">Submit</button>
+  </form>
 
-    <button type="submit">Submit</button>
-</form>
-
-<div id="response">hello world</div>
-
+  <p id="response">Form responses here boi</p>
+</div>
+<div>
+  <p>Not registered ?</p>
+  <a class="logout" href=" /Task-Dashboard/views/registration.php">Register</a>
+</div>
 
 <?php
   include_once './layouts/footer.php';

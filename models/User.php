@@ -16,7 +16,7 @@ class User {
         $rowsAffected = $stmt->rowCount();
 
         if ($rowsAffected > 0) {
-          return "user exists";
+          return false;
 
         } else {
           // Username doesn't exist, encrypt password
