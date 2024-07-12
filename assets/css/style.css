@@ -1,0 +1,550 @@
+:root {
+  --main-color: rgba(76, 4, 158, 0.649);
+  --secondary-color: rgba(105, 8, 215, 0.649);
+  --dark-color: #0F0F0F;;
+  --dark-light-color: #191919;;
+  --dark-lighter-color: #202020;;
+  --darkets-color: #121212;;
+}
+
+* {
+  font-family: 'Roboto';
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--dark-color);
+}
+
+/* login / registration respones box */
+.register-response-box,
+.login-response-box {
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* response message */
+#response {
+  color: red;
+  font-size: 12px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Login / Registration container */
+.main-container {
+  background: #0F0F0F;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Login / Registration form */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 200px;
+  width: 250px;
+  gap: 1rem;
+  background: var(--dark-light-color);
+  box-shadow: 1px 1px 1px 0px inset rgba(80, 80, 80, 0.45), 1px 1px 1px 0px rgba(0, 0, 0, 0.903);
+  padding: 1rem;
+  padding-top: 2.5rem;
+  padding-bottom: 1.85rem;
+  border-radius: 8px;
+}
+
+/* Form nav links login <--> registration */
+.form-nav-register ,
+.form-nav-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 13px;
+}
+
+.form-nav-register a,
+.form-nav-login a{
+  position: relative;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+}
+
+.form-nav-register a::before,
+.form-nav-login a::before {
+  content: "";
+  position: absolute;
+  background: #fff;
+  top: 18px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  transition: all 0.3s ease;
+}
+.form-nav-register a:hover::before,
+.form-nav-login a:hover::before {
+  content: "";
+  top: 18px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.form-nav-register p, 
+.form-nav-register a, 
+.form-nav-login p, 
+.form-nav-login a {
+  color: grey;
+}
+
+
+.form-nav-register a, 
+.form-nav-login a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* login/reg headnhg */
+.form-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.form-heading h1{
+  font-weight: 300;
+  color: #fff;
+  font-size: 20px;
+
+}
+
+#login-form,
+#register-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* login/reg form */
+.form-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* login/reg input */
+.form-items input{
+  width: 100%;
+  height: 30px;
+  background: var(--darkets-color);
+  border: none;
+  border-radius: 5px;
+ 
+  color: grey;
+  font-size: 12px;
+}
+
+.form-items input[type="password"],
+.form-items input[type="text"] {
+  box-sizing: border-box;
+  padding-left: 10px; 
+}
+
+/* sign in / up btns */
+.login-btn, 
+.register-btn {
+  width: 100%;
+  height: 25px;
+
+  background: var(--main-color);
+  color:#fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: .3s ease;
+
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.login-btn:hover,
+.register-btn:hover {
+  background: var(--secondary-color);
+}
+
+/* Task dashboard response box */
+.tasks-response-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+/* Task dashboard nav */
+.navbar {
+  background: var(--main-color);
+  padding: 0.855rem 5rem 0.85rem 5rem;
+
+}
+
+.navbar ul {
+  color: #fff;
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+
+.navbar ul a {
+  color: #fff;
+  position: relative;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar li a::before {
+  content: "";
+  position: absolute;
+  background: #fff;
+  top: 18px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  transition: all 0.3s ease;
+}
+.navbar li a:hover::before {
+  content: "";
+  top: 18px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+/* Create/update input form */
+#task-form {
+  background: var(--dark-light-color);
+}
+
+#task-list {
+  background: var(--dark-light-color);
+}
+
+/* tasks respones text */
+#response-task {
+  color: #fff;
+}
+
+/* tables and form container */
+.tasks-section {
+  display: flex;
+  margin: 0 5rem 5rem 5rem;
+  gap: 5rem;
+}
+
+/* table container */
+.left-container {
+  flex-grow: 1; 
+  flex-basis: 0;
+}
+
+.task-table {
+  width: 100%;
+  color: #fff;
+}
+
+.task-table th, .task-table td {
+  border: 1px solid var(--main-color);
+  text-align: left;
+}
+
+.task-table th {
+  background-color: var(--dark-color);
+  font-weight: bold;
+  padding: 1rem;
+  font-size: 14px;
+}
+
+.task-table tr {
+  min-height: 50px;
+}
+
+.task-table tr:nth-child(even) {
+  background-color: var(--dark-light-color);
+}
+
+.task-table tr:nth-child(odd) {
+  background-color: var(--dark-lighter-color);
+}
+
+.task-table tr:hover {
+  background-color: var(--darkets-color);
+}
+
+.task-table td {
+  font-size: 14px;
+  padding: 1rem;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+  min-width: 100px;
+}
+
+.btns-align {
+  display: flex;
+  justify-content: center;
+  gap: .25rem;
+}
+
+/* table btns */
+.task-update-delete-btns button {
+  color:#fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: .3s ease;
+  width: 60px;
+  height: 25px;
+
+}
+
+.task-update-delete-btns button:hover,
+.task-update-delete-btns button:hover {
+  background: var(--secondary-color);
+}
+
+ .task-table button.edit {
+  background-color: #068e26;
+  transition: .3s ease;
+}
+
+.task-table button.edit:hover {
+  background-color: #08ac2e;
+}
+
+.task-table button.delete {
+  background-color: #ac0515;
+  transition: .3s ease;
+}
+
+.task-table button.delete:hover {
+  background-color: #d0071b;
+}
+
+/* nake calendar white */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* update/create form container */
+.right-container {
+  flex-shrink: 0; 
+  flex-basis: 350px;
+  max-width: 350px; 
+  width: 100%; 
+}
+
+#task-form{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%; 
+  border: 3px solid var(--main-color);
+  border-radius: 8px;
+}
+
+#task-form input:nth-of-type(2),
+#task-form textarea,
+#task-form input:nth-child(4),
+#task-form select {
+  height: 40px;
+  background: var(--dark-color);
+  font-size: 14px;
+  border: none;
+  padding: .25rem;
+}
+
+#task-form input:focus,
+#task-form textarea:focus,
+#task-form select:focus {
+  outline: none; 
+  background: var(--dark-light-color);
+}
+
+#task-form input:nth-of-type(2) {
+  border-radius: 8px 8px 0 0;
+  height: 40px;
+  color: rgb(234, 234, 234) !important;
+}
+
+#task-form textarea {
+  height: 250px;
+  border-top: 3px solid var(--main-color);
+}
+
+#task-form input:nth-child(4) {
+  border-top: 3px solid var(--main-color);
+}
+
+#task-form select {
+  border-top: 3px solid var(--main-color);
+  color: rgb(152, 152, 152) !important;
+}
+
+#task-form textarea{
+  height: 250px;
+  border: none;
+  border-top: 3px solid var(--main-color);
+  resize: none;
+  color: rgb(234, 234, 234) !important;
+}
+
+#due_date {
+  border: none;
+  border-top: 3px solid var(--main-color);
+  color: rgb(152, 152, 152) !important;
+}
+
+#task-btn {
+  width: 100%;
+  height: 30px;
+
+  background: var(--main-color);
+  color:#fff;
+  border: none;
+  border-radius: 0 0 4px 4px;
+  cursor: pointer;
+  transition: .3s ease;
+
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#task-btn:hover {
+  background: var(--secondary-color);
+}
+
+#pagination-controls {
+  margin-left: 5rem;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+
+  gap: 1rem;
+}
+
+.pagination-btn {
+  border: none;
+  background: var(--main-color);
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  box-sizing: content-box;
+}
+
+.pagination-btn:hover {
+  background: var(--secondary-color);
+}
+
+/* Mid */
+@media screen and (max-width: 1300px) {
+  .tasks-section {
+    display: flex;
+    flex-direction: column-reverse;
+    margin: 0 5rem 5rem 5rem;
+    gap: 5rem;
+  }  
+
+  .right-container {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+/* small-mid */
+@media screen and (max-width: 825px) {
+  .tasks-section {
+    display: flex;
+    margin: 0 2rem 2rem 2rem;
+    gap: 5rem;
+  }
+  .navbar {
+    background: var(--main-color);
+    padding: 0.855rem 2rem 0.85rem 2rem;
+  }
+}
+
+/*  < Small */
+@media screen and (max-width: 763px) {
+  .tasks-section {
+    flex-direction: column-reverse;
+    margin: 1rem;
+    gap: 1rem;
+  }
+
+  .left-container {
+    flex-basis: 100%;
+  }
+
+  .task-table {
+    overflow: hidden;
+    display: block;
+  }
+
+  .task-table tbody, .task-table th, .task-table td, .task-table tr {
+    display: block;
+  }
+
+  .task-table thead {
+    display: none; 
+  }
+
+  .task-table tr {
+    border: 1px solid var(--main-color);
+    margin-bottom: 1rem;
+  }
+
+  .task-table td {
+    border: none;
+    border-bottom: 1px solid var(--main-color);
+    position: relative;
+    text-align: right;
+    text-align: center;
+  }
+
+  .task-table td:before {
+    position: absolute;
+    top: 0;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+    content: attr(data-label);
+    color: white;
+  }
+
+}

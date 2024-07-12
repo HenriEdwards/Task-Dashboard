@@ -5,90 +5,117 @@ require_once "../config/database.php";
 class User {
   // Register a new user
   public function register($username, $password) {
+    // Get database connection
     $dbo = Database::getConnection();
-
+  
     try {
-      // Check if username already exists
+      // Preprae sql statement to check if username already exists
       $stmt = $dbo->prepare("SELECT * FROM users WHERE username = :username");
       $stmt->bindParam(':username', $username);
-  
+    
+      // Execute username select statement
       if ($stmt->execute()) {
         $rowsAffected = $stmt->rowCount();
-
+  
         if ($rowsAffected > 0) {
-          return false;
+          return [
+            "response" => false,
+            "error" => "Username already registered."
+          ];
 
         } else {
           // Username doesn't exist, encrypt password
           $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
+  
           // Create new user
           $stmt = $dbo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
           $stmt->bindParam(':username', $username);
           $stmt->bindParam(':password', $hashedPassword);
-
+  
           if ($stmt->execute()){
             $rowsAffected = $stmt->rowCount();
-
+  
             if ($rowsAffected > 0) {
-              // user successfully registered
-              return true;
-              
+              // User successfully registered
+              return [
+                "response" => true
+              ];
             } else {
-              // user not registered for some reason
-              return false;
+              return [
+                "response" => false,
+                "error" => "Error occurred while executing statement."
+              ];
             }
           } else {
-            return 'error occurred while executing statement';
+            return [
+              "response" => false,
+              "error" => "Error occurred while executing statement."
+            ];
           }
         }
       } else {
-        return 'error occurred while executing statement';
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
       }
     } catch (Exception $e) {
-      return $e;
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
     }
   }
-
+  
   public function login($username, $password) {
+    // Get database connection
     $dbo = Database::getConnection();
-
+  
     try {
-      // Check if username exists
+      // Prepare sql statement
       $stmt = $dbo->prepare("SELECT * FROM users WHERE username = :username");
       $stmt->bindParam("username", $username);
-
+  
       if ($stmt->execute()) {
         $rowsAffected = $stmt->rowCount();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
   
+        // Check if username exists
         if ($rowsAffected > 0) {
           // User exists, compare provided password with stored hash
           if (is_array($result) && password_verify($password, $result["password"])) {
-            // username & password matches
-            return array(
-              "success" => true,
+            // username & password match
+            return [
+              "response" => true,
               "userID" => $result["user_ID"]
-            );
+            ];
           } else {
-            // Password doesnt match
-            return array(
-              "success" => false,
+            // Password doesn't match
+            return [
+              "response" => false,
               "error" => "Invalid username or password."
-            );
+            ];
           }
         } else {
-          // Username doesnt match
-          return array(
-            "success" => false,
+          // Username doesn't exist
+          return [
+            "response" => false,
             "error" => "Invalid username or password."
-          );
+          ];
         }
       } else {
-        return "Error executing login";
+        // Error executing query
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
       }
     } catch (Exception $e) {
-      return "Error occurred while logging in: " . $e->getMessage();
+      // Exception caught
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
     }
   }
 }

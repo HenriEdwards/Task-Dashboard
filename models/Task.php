@@ -1,152 +1,232 @@
-
 <?php
 require_once "../config/database.php";
 
 class Task {
-  // Retrieve tasks
-  public function getTasks($userId, $pageNr) {
+  // Function to get user specific tasks with pagination
+  public function getTasks($userId, $limit, $offset) {
+    // Get database connection
     $dbo = Database::getConnection();
 
-    // check if page number have a value, if no assign 1
-    if (!$pageNr) {
-      $pageNr = 1;
-    }
-    echo $pageNr;
-    // 
-
-
-
-    // O
-
-  }
-
-  // Create a task
-  public function createTasks($title, $description, $dueDate, $status, $userId) {
-    $dbo = Database::getConnection();
-
-    // Check what status_ID the provided status is
-    $stmt = $dbo->prepare("SELECT status_ID from status WHERE status = :status");
-    $stmt->bindParam('status', $status);
-
-    // Execute
     try {
+      // Prepare sql statement to fetch tasks
+      $stmt = $dbo->prepare("
+        SELECT 
+          t.task_ID, 
+          t.title, 
+          t.description, 
+          t.due_date,
+          s.status_val
+        FROM tasks t
+        JOIN status s ON t.status_ID = s.status_ID  
+        WHERE t.user_ID = :userId
+        ORDER BY t.due_date ASC
+        LIMIT :limit OFFSET :offset");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+      $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
+      // Execute get task statement
       if ($stmt->execute()) {
-        $rowsAffected = $stmt->rowCount();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($rowsAffected > 0){
-          $statusId = $result['status_ID'];
-          echo " got the status id as $statusId";
-        } else {
-          echo " could not find id of the status ";
-        }
+        // Fetch tasks as an associative array
+        $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Get total num of tasks for pagination
+        $totalTasks = $this->getTotalTasks($userId);
+        $totalPages = ceil($totalTasks / $limit);
+        return [
+          "response" => true,
+          "tasks" => $tasks,
+          "totalPages" => $totalPages
+        ];
       } else {
-        echo " error retrieving the status id ";
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
       }
     } catch (Exception $e) {
-      echo " exception error STATUS";
-    }
-
-    // Prepare insert statement
-    $stmt = $dbo->prepare("INSERT INTO tasks (title, description, due_date, status_ID, user_ID) VALUES (:title, :description, :duedate, :statusId, :userId)");
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':duedate', $dueDate);
-    $stmt->bindParam(':statusId', $statusId);
-    $stmt->bindParam(':userId', $userId);
-
-    // POSSIBLY REMOVE ONLY FOR TESTING
-    // As i will probably just add the 'data sent to the backend', meanbing the data provided by the user/frontend ON SUCCESSFULLY ADDING OF TASK
-    $array = [$title, $description, $dueDate, $status];
-    // Execute insert statement
-
-    try {
-      if ($stmt->execute()) {
-          $rowsAffected = $stmt->rowCount();
-          if ($rowsAffected > 0) {
-              echo "Creation Successful";
-              echo '<pre>'; print_r($array); echo '</pre>';
-          } else {
-              echo "No rows were created ";
-          }
-      } else {
-          echo "ERROR creating task";
-      }
-    } catch (Exception $e) {
-        echo "Error occurred while creating: " . $e->getMessage();
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
     }
   }
 
-  // Delete a task
-  public function deleteTasks($taskId) {
+  // Function to get total num of tasks for user
+  private function getTotalTasks($userId) {
+    // Get database connection
     $dbo = Database::getConnection();
-
-    $stmt = $dbo->prepare("DELETE FROM tasks WHERE :taskId = task_ID");
-    $stmt->bindParam(':taskId', $taskId);
-
     try {
+      // Prepare sql statement to count tasks
+      $stmt = $dbo->prepare("SELECT COUNT(*) FROM tasks WHERE user_ID = :userId");
+      $stmt->bindParam(':userId', $userId);
+      // Execute & fetch count
       if ($stmt->execute()) {
-          $rowsAffected = $stmt->rowCount();
-          if ($rowsAffected > 0) {
-              echo "Deletion Successful";
-          } else {
-              echo "No rows were deleted (the task ID may not exist)";
-          }
+        return $stmt->fetchColumn();
       } else {
-          echo "ERROR deleting task";
+        return 0;
       }
     } catch (Exception $e) {
-        echo "Error occurred while deleting: " . $e->getMessage();
+      return 0;
     }
   }
 
-  // Update a task
-  public function updateTasks($title, $description, $dueDate, $status, $taskId) {
+  // Function to create a new task
+  public function createTask($userId, $title, $description, $dueDate, $status) {
+    // Get database connection
     $dbo = Database::getConnection();
 
-    // Check what status_ID the provided status is
-    $stmt = $dbo->prepare("SELECT status_ID from status WHERE status = :status");
-    $stmt->bindParam(':status', $status);
-
-    // Execute
     try {
+      // Prepare sql statement to get status id
+      $stmt = $dbo->prepare("
+        SELECT status_ID 
+        FROM status 
+        WHERE status_val = :status
+      ");
+      $stmt->bindParam(':status', $status);
+      $stmt->execute();
+
+      // Retrieve status
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!$result) {
+        return [
+          "response" => false,
+          "error" => "Invalid status value."
+        ];
+      }
+      $statusID = $result['status_ID'];
+      
+      // Prepare sql statement to insert new task
+      $stmt = $dbo->prepare("
+        INSERT INTO tasks (user_ID, title, description, due_date, status_ID)
+        VALUES (:userId, :title, :description, :dueDate, :statusId)
+      ");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':title', $title);
+      $stmt->bindParam(':description', $description);
+      $stmt->bindParam(':dueDate', $dueDate);
+      $stmt->bindParam(':statusId', $statusID);
+
       if ($stmt->execute()) {
         $rowsAffected = $stmt->rowCount();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($rowsAffected > 0){
-          $statusId = $result['status_ID'];
-          echo " got the status id as $statusId";
+
+        if ($rowsAffected > 0) {
+          return ["response" => true];
         } else {
-          echo " could not find id of the status ";
+          return [
+            "response" => false,
+            "error" => "Task not created."
+          ];
         }
       } else {
-        echo " error retrieving the status id ";
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
       }
     } catch (Exception $e) {
-      echo " exception error STATUS";
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
     }
-    
+  }
 
-    $stmt = $dbo->prepare("UPDATE tasks SET title = :title, description = :description, due_date = :dueDate, status_ID = :statusId WHERE task_ID = :taskId");
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':dueDate', $dueDate);
-    $stmt->bindParam(':statusId', $statusId);
-    $stmt->bindParam(':taskId', $taskId);
-    
-    // Execute
+  // Function to update an existing task
+  public function updateTask($taskId, $title, $description, $dueDate, $status) {
+    // Get database connection
+    $dbo = Database::getConnection();
+
     try {
+      // Prepare sql statement to get status id
+      $stmt = $dbo->prepare("
+      SELECT status_ID 
+      FROM status 
+      WHERE status_val = :status
+      ");
+      $stmt->bindParam(':status', $status);
+      $stmt->execute();
+
+      // Retrieve status
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!$result) {
+        return [
+          "response" => false,
+          "error" => "Invalid status value."
+        ];
+      }
+      $statusID = $result['status_ID'];
+      // Prepare sql statement to update a task
+      $stmt = $dbo->prepare("
+        UPDATE tasks
+        SET title = :title, description = :description, due_date = :dueDate, status_ID = :statusId
+        WHERE task_ID = :taskId
+      ");
+      $stmt->bindParam(':taskId', $taskId);
+      $stmt->bindParam(':title', $title);
+      $stmt->bindParam(':description', $description);
+      $stmt->bindParam(':dueDate', $dueDate);
+      $stmt->bindParam(':statusId', $statusID);
+
       if ($stmt->execute()) {
         $rowsAffected = $stmt->rowCount();
-        if ($rowsAffected > 0){
-          echo " Updated the task ";
+
+        if ($rowsAffected > 0) {
+          return ["response" => true];
         } else {
-          echo " Task could not be updated as it might not exist ";
+          return [
+            "response" => false,
+            "error" => "No information changed."
+          ];
         }
       } else {
-        echo " error updating the task ";
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
       }
     } catch (Exception $e) {
-      echo $e;
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
+    }
+  }
+
+  // Function to delete a task
+  public function deleteTask($taskId) {
+    // Get database connection
+    $dbo = Database::getConnection();
+
+    try {
+      // Prepare sql statement to delete a task
+      $stmt = $dbo->prepare("DELETE FROM tasks WHERE task_ID = :taskId");
+      $stmt->bindParam(':taskId', $taskId);
+
+      if ($stmt->execute()) {
+        $rowsAffected = $stmt->rowCount();
+
+        if ($rowsAffected > 0) {
+          return [
+            "response" => true
+          ];
+        } else {
+          return [
+            "response" => false,
+            "error" => "Task not deleted."
+          ];
+        }
+      } else {
+        return [
+          "response" => false,
+          "error" => "Error occurred while executing statement."
+        ];
+      }
+    } catch (Exception $e) {
+      // Exception caught
+      return [
+        "response" => false,
+        "error" => "Internal server error: " . $e->getMessage()
+      ];
     }
   }
 }

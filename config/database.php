@@ -7,23 +7,21 @@ class Database {
   private $dbname = "task_manager";
   private $conn;
 
-  // Private constructor to prevent direct instantiation of the class
   private function __construct() {
-    // Call the private connect() method to establish the database connection
+    // Call connect() method to establish the database connection
     $this->connect();
   }
 
-  // Private method to establish the database connection
+  // Function to establish the database connection
   private function connect() {
     try {
-      // Create a new PDO instance to connect to the database
+      // Create a new PDO instance 
       $this->conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-      // Set the PDO error mode to exception, so that exceptions are thrown for errors
+      // Set the PDO error mode to exception
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       // echo "Connected successfully";
     } catch(PDOException $e) {
-      // If there's an error, echo the error message
-      // echo "Connection failed: " . $e->getMessage();
+      echo "Connection failed: " . $e->getMessage();
     }
   }
 
@@ -31,12 +29,12 @@ class Database {
   public static function getConnection() {
     // Check if an instance of the Database class already exists
     if (self::$instance === null) {
-      // If not, create a new instance and store it in the static $instance property
+      // If not, create a new instance and store it in $instance
       self::$instance = new self();
     }
-    // Return the database connection object from the Database instance
+    // Return database connection object from the Database instance
     return self::$instance->conn;
   }
-  // Static property to store the single instance of the Database class
+  // Static property to store the single instance of Database instance
   private static $instance = null;
 }
