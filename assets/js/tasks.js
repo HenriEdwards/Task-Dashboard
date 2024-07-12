@@ -1,3 +1,4 @@
+// Function validates user input & returns errors & cont if ok
 function validateTaskForm (title, description, dueDate, status) {
   title = title.trim();
   description = description.trim();
@@ -18,7 +19,6 @@ function validateTaskForm (title, description, dueDate, status) {
     return false;
   }
 
-  // Return validated input
   let dataObj = {
     title: title, 
     description: description,
@@ -44,17 +44,14 @@ $(document).ready(function() {
       },
       success: function(response) {
         if (response.response) {
-          // Store tasks
           tasks = response.tasks;
-          // Call renderTasks to display tasks
           renderTasks(response.tasks);
-          // Render pagination controls
           renderPagination(response.totalPages, page);
         } else {
           $("#task-list").html("<p>No tasks found.</p>");
         }
       },
-      error: function(xhr, status, error) {
+      error: function(xhr) {
         let errorMessage = "Error loading tasks.";
         try {
           const response = JSON.parse(xhr.responseText);
@@ -69,6 +66,10 @@ $(document).ready(function() {
 
   // Function renders tasks to DOM
   function renderTasks(tasks) {
+    if (!tasks.length) {
+      $("#task-list").html("<p class = 'no-tasks-found'>No tasks found.</p>");
+      return;
+    }
     let taskTable = `
       <table class="task-table">
         <thead>
@@ -102,9 +103,8 @@ $(document).ready(function() {
     $("#task-list").html(taskTable);
   }
   
-
   // Function renders pagination controls
-  function renderPagination(totalPages, currentPage) {
+  function renderPagination(totalPages) {
     let paginationControls = '';
     for (let i = 1; i <= totalPages; i++) {
       paginationControls += `<button class="pagination-btn" data-page="${i}">${i}</button>`;
@@ -117,7 +117,6 @@ $(document).ready(function() {
   $('#task-form').submit(function(e) {
     e.preventDefault();
 
-    // Retrieve task form values
     let taskId = $("#task_id").val();
     let title = $("#title").val();
     let description = $("#description").val();
@@ -127,12 +126,11 @@ $(document).ready(function() {
     // Validate input
     let inputData = validateTaskForm (title, description, dueDate, status);
 
-    // Stop script on invalid input
+    // Stop if invalid
     if (!inputData) {
       return;
     }
 
-    // Determine user action - update/create task
     let action = taskId ? 'updateTask' : 'createTask';
 
     // Ajax request to create/update tasks
@@ -152,11 +150,8 @@ $(document).ready(function() {
           $("#response-task").text("Task saved.");
           // Call loadTasks to reload rendered tasks after successful db update
           loadTasks();
-          // Reset create/update task form
           $("#task-form")[0].reset();
-          // Clear hidden field
           $("#task_id").val('');
-          // Change button text back to Create Task
           $("#task-btn").text('Create Task');
         } else {
           $("#response-task").text(response.error);
@@ -211,7 +206,6 @@ $(document).ready(function() {
 
   // Handle task editing
   $(document).on('click', '.edit', function() {
-    // Get ID of task to edit
     let taskId = $(this).data('id');
     // Find relevant task
     let task = tasks.find(t => t.task_ID == taskId);
@@ -227,11 +221,9 @@ $(document).ready(function() {
     }
   });
 
-  // Handle pagination btn click
+  // Handle pagination 
   $(document).on('click', '.pagination-btn', function() {
-    // Get page number to load
     let page = $(this).data('page');
-    // Load tasks for selected page
     loadTasks(page);
   });
 

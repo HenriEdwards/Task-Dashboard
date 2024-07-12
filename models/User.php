@@ -10,7 +10,9 @@ class User {
   
     try {
       // Preprae sql statement to check if username already exists
-      $stmt = $dbo->prepare("SELECT * FROM users WHERE username = :username");
+      $stmt = $dbo->prepare("
+      SELECT * FROM users 
+      WHERE username = :username");
       $stmt->bindParam(':username', $username);
     
       // Execute username select statement
@@ -22,7 +24,6 @@ class User {
             "response" => false,
             "error" => "Username already registered."
           ];
-
         } else {
           // Username doesn't exist, encrypt password
           $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -73,7 +74,9 @@ class User {
   
     try {
       // Prepare sql statement
-      $stmt = $dbo->prepare("SELECT * FROM users WHERE username = :username");
+      $stmt = $dbo->prepare("
+      SELECT * FROM users 
+      WHERE username = :username");
       $stmt->bindParam("username", $username);
   
       if ($stmt->execute()) {
@@ -104,14 +107,12 @@ class User {
           ];
         }
       } else {
-        // Error executing query
         return [
           "response" => false,
           "error" => "Error occurred while executing statement."
         ];
       }
     } catch (Exception $e) {
-      // Exception caught
       return [
         "response" => false,
         "error" => "Internal server error: " . $e->getMessage()

@@ -468,6 +468,12 @@ body {
   background: var(--secondary-color);
 }
 
+.no-tasks-found {
+  background: var(--dark-color);
+  color: #fff !important;
+  text-align: center;
+}
+
 /* Mid */
 @media screen and (max-width: 1300px) {
   .tasks-section {

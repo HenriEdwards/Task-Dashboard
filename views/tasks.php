@@ -1,8 +1,6 @@
 <?php
 session_start();
-// Check if user is NOT logged in
 if (!isset($_SESSION['userID'])) {
-  // Redirect user to login page
   header("Location: /Task-Dashboard/views/login.php");
   exit;
 }

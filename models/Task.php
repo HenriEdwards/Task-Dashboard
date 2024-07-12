@@ -4,7 +4,6 @@ require_once "../config/database.php";
 class Task {
   // Function to get user specific tasks with pagination
   public function getTasks($userId, $limit, $offset) {
-    // Get database connection
     $dbo = Database::getConnection();
 
     try {
@@ -53,11 +52,12 @@ class Task {
 
   // Function to get total num of tasks for user
   private function getTotalTasks($userId) {
-    // Get database connection
     $dbo = Database::getConnection();
     try {
-      // Prepare sql statement to count tasks
-      $stmt = $dbo->prepare("SELECT COUNT(*) FROM tasks WHERE user_ID = :userId");
+      $stmt = $dbo->prepare("
+      SELECT 
+      COUNT(*) FROM tasks 
+      WHERE user_ID = :userId");
       $stmt->bindParam(':userId', $userId);
       // Execute & fetch count
       if ($stmt->execute()) {
@@ -72,7 +72,6 @@ class Task {
 
   // Function to create a new task
   public function createTask($userId, $title, $description, $dueDate, $status) {
-    // Get database connection
     $dbo = Database::getConnection();
 
     try {
@@ -97,8 +96,10 @@ class Task {
       
       // Prepare sql statement to insert new task
       $stmt = $dbo->prepare("
-        INSERT INTO tasks (user_ID, title, description, due_date, status_ID)
-        VALUES (:userId, :title, :description, :dueDate, :statusId)
+        INSERT INTO tasks 
+        (user_ID, title, description, due_date, status_ID)
+        VALUES 
+        (:userId, :title, :description, :dueDate, :statusId)
       ");
       $stmt->bindParam(':userId', $userId);
       $stmt->bindParam(':title', $title);
@@ -133,16 +134,15 @@ class Task {
 
   // Function to update an existing task
   public function updateTask($taskId, $title, $description, $dueDate, $status) {
-    // Get database connection
     $dbo = Database::getConnection();
 
     try {
       // Prepare sql statement to get status id
       $stmt = $dbo->prepare("
-      SELECT status_ID 
-      FROM status 
-      WHERE status_val = :status
-      ");
+        SELECT status_ID 
+        FROM status 
+        WHERE status_val = :status
+        ");
       $stmt->bindParam(':status', $status);
       $stmt->execute();
 
@@ -155,10 +155,14 @@ class Task {
         ];
       }
       $statusID = $result['status_ID'];
+      
       // Prepare sql statement to update a task
       $stmt = $dbo->prepare("
         UPDATE tasks
-        SET title = :title, description = :description, due_date = :dueDate, status_ID = :statusId
+        SET title = :title, 
+        description = :description, 
+        due_date = :dueDate, 
+        status_ID = :statusId
         WHERE task_ID = :taskId
       ");
       $stmt->bindParam(':taskId', $taskId);
@@ -194,12 +198,12 @@ class Task {
 
   // Function to delete a task
   public function deleteTask($taskId) {
-    // Get database connection
     $dbo = Database::getConnection();
 
     try {
-      // Prepare sql statement to delete a task
-      $stmt = $dbo->prepare("DELETE FROM tasks WHERE task_ID = :taskId");
+      $stmt = $dbo->prepare("
+      DELETE FROM tasks
+       WHERE task_ID = :taskId");
       $stmt->bindParam(':taskId', $taskId);
 
       if ($stmt->execute()) {
@@ -222,7 +226,6 @@ class Task {
         ];
       }
     } catch (Exception $e) {
-      // Exception caught
       return [
         "response" => false,
         "error" => "Internal server error: " . $e->getMessage()
